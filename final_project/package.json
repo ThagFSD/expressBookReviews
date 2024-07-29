@@ -8,7 +8,6 @@
     "start": "nodemon index.js"
   },
   "keywords": [],
-  "start_auth": "node index.js",
   "author": "",
   "license": "MIT",
   "dependencies": {

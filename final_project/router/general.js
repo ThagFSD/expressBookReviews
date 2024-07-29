@@ -4,6 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+
 const doesExist = (username)=>{
   let userswithsamename = users.filter((user)=>{
     return user.username === username
@@ -15,12 +16,9 @@ const doesExist = (username)=>{
   }
 }
 
-
-public_users.post("/register", (req,res) => {
-  //Write your code here
+public_users.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-
 
   if (username && password) {
     if (!doesExist(username)) { 
@@ -34,22 +32,25 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Write your code here
-  res.send(JSON.stringify(books,null,4));
+public_users.get('/', function (req, res) {
+  // Get data from bookdbs.js
+  res.send(books);
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  const ISBN = req.params.isbn;
-  
-  res.send(books[ISBN])
- });
-  
+public_users.get('/isbn/:isbn', function (req, res) {
+  // Extract the ISBN from request URL 
+  const isbn = req.params.isbn;
+  let filterBooks = books[isbn];
+  if (filterBooks) {
+    res.send(JSON.stringify(filterBooks, null, 1));
+  } else {
+    res.send("The book you looking for is not exist !");
+  }
+});
+
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
+public_users.get('/author/:author', function (req, res) {
   let ans = []
     for(const [key, values] of Object.entries(books)){
         const book = Object.entries(values);
@@ -66,8 +67,7 @@ public_users.get('/author/:author',function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
+public_users.get('/title/:title', function (req, res) {
   let ans = []
   for(const [key, values] of Object.entries(books)){
       const book = Object.entries(values);
@@ -81,6 +81,12 @@ public_users.get('/title/:title',function (req, res) {
       return res.status(300).json({message: "Title not found"});
   }
   res.send(ans);
+});
+
+//  Get book review
+public_users.get('/review/:isbn', function (req, res) {
+   const ISBN = req.params.isbn;
+   res.send(books[ISBN].reviews);
 });
 
 //  Get book review

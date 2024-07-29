@@ -3,21 +3,34 @@ const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 
-let users = [{"username":"ThagFSD","password":"12345"}];
+let users = [{
+  "username":"ThagFSD",
+  "password":"12356"
+}];
 
 const isValid = (username)=>{ //returns boolean
-//write code to check is the username is valid
-    const userMatches = users.filter((user) => user.username === username);
-    return userMatches.length > 0;
+  let fileterUser = users.filter((user) => {
+    return user.username == username;
+  });
+
+  if(fileterUser.length > 0){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 const authenticatedUser = (username,password)=>{ //returns boolean
-//write code to check if username and password match the one we have in records.
-  const matchingUsers = users.filter((user) => user.username === username && user.password === password);
-  return matchingUsers.length > 0;
+  let validusers = users.filter((user) => {
+    return (user.username === username && user.password === password);
+});
+
+if (validusers.length > 0) {
+    return true;
+} else {
+    return false;
 }
-
-
+}
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
@@ -73,7 +86,6 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
       return res.status(404).json({message: `ISBN ${isbn} not found`});
   }
 });
-
 
 
 module.exports.authenticated = regd_users;
